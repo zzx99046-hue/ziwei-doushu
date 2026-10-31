@@ -33,7 +33,10 @@ export const dynamicParams = false;
 export async function generateStaticParams() {
   const routes = getAllKnowledgeRoutes();
   // URL 用拼音 slug 替代中文，避开 Vercel/CDN 中文路由边界问题
-  return routes.map(r => ({ star: r.slug, topic: r.topic }));
+  return [
+    ...ALL_STARS.map(star => ({ star: STAR_TO_SLUG[star], topic: 'overview' })),
+    ...routes.filter(r => r.topic !== 'overview').map(r => ({ star: r.slug, topic: r.topic })),
+  ];
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ star: string; topic: string }> }) {
@@ -72,7 +75,17 @@ export default async function KnowledgePage({ params }: { params: Promise<{ star
   const star = SLUG_TO_STAR[slug];
   if (!star) notFound();
   const data = getKnowledge(star, topic as TopicKey);
-  if (!data.exists) notFound();
+  if (!data.exists) {
+    return (
+      <main className="max-w-3xl mx-auto px-6 py-12">
+        <h1 className="text-2xl mb-4">{star}星</h1>
+        <p className="mb-4">{STAR_BRIEF_SEO[star]}</p>
+        <p className="mb-6">开源版未包含此专题的详细断语。你仍可使用排盘引擎和古籍原典库。</p>
+        <Link href="/knowledge">← 返回知识库</Link>
+        {' · '}<Link href="/library">阅读古籍</Link>
+      </main>
+    );
+  }
 
   // 同主星其他 topic
   const otherTopicsForStar = ALL_TOPICS.filter(t => t !== topic && getKnowledge(star, t).exists);

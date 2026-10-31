@@ -1,8 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { ThemeProvider } from '@/components/ThemeProvider';
-import { Analytics } from '@vercel/analytics/next';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 import { SITE_URL } from '@/lib/site';
 
 export const metadata: Metadata = {
@@ -27,7 +25,7 @@ export const metadata: Metadata = {
     google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION || undefined,
     // Bing Webmaster Tools: 在 https://www.bing.com/webmasters 添加站点后获取
     other: {
-      'msvalidate.01': process.env.NEXT_PUBLIC_BING_VERIFICATION || '808FFC6023A2C359B375DD860FEDA856',
+      'msvalidate.01': process.env.NEXT_PUBLIC_BING_VERIFICATION || '',
       // 百度站长（等执照下来后）
       'baidu-site-verification': process.env.NEXT_PUBLIC_BAIDU_VERIFICATION || '',
       // 360 站长（等执照下来后）
@@ -46,8 +44,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider>
           {children}
         </ThemeProvider>
-        <Analytics />
-        <SpeedInsights />
       </body>
     </html>
   );
