@@ -182,7 +182,24 @@ function AiContent({ text, streaming }: { text: string; streaming?: boolean }) {
   );
 }
 
-export default function InsightPanel({ chart, selectedPalace, selectedSiHua }: InsightPanelProps) {
+export default function InsightPanel(props: InsightPanelProps) {
+  if (process.env.NEXT_PUBLIC_STATIC_EXPORT === 'true') {
+    return (
+      <div className="h-full rounded-xl card-glass p-6 space-y-3">
+        <h2 className="text-sm font-medium" style={{ color: 'var(--t-gold)' }}>AI 解读尚未接入</h2>
+        <p className="text-sm leading-relaxed" style={{ color: 'var(--t-text)' }}>
+          当前网站支持排盘、宫位查看和古籍阅读。此开源版本未提供 AI 解读服务及完整断语库，因此暂时无法生成解读或继续追问。
+        </p>
+        <p className="text-xs leading-relaxed" style={{ color: 'var(--t-faint)' }}>
+          这不是你的输入有误，刷新页面无法开启这项功能；需要另行接入解读服务。排盘不受影响。
+        </p>
+      </div>
+    );
+  }
+  return <ConnectedInsightPanel {...props} />;
+}
+
+function ConnectedInsightPanel({ chart, selectedPalace, selectedSiHua }: InsightPanelProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
